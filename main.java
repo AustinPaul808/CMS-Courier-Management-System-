@@ -136,3 +136,99 @@ class CourierManager {
 public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
+        CourierManager manager = new CourierManager();
+
+        int choice;
+
+        do {
+            System.out.println("\n===== Courier Management System =====");
+            System.out.println("1. Add Domestic Courier");
+            System.out.println("2. Add International Courier");
+            System.out.println("3. Display All Couriers");
+            System.out.println("4. Search Courier by ID");
+            System.out.println("5. Remove Courier");
+            System.out.println("6. Exit");
+            System.out.print("Enter your choice: ");
+            choice = sc.nextInt();
+            sc.nextLine();
+
+            switch (choice) {
+
+                case 1:
+                    System.out.print("Enter ID: ");
+                    int id1 = sc.nextInt();
+                    sc.nextLine();
+
+                    System.out.print("Enter Sender Name: ");
+                    String sender1 = sc.nextLine();
+
+                    System.out.print("Enter Receiver Name: ");
+                    String receiver1 = sc.nextLine();
+
+                    System.out.print("Enter Address: ");
+                    String address1 = sc.nextLine();
+
+                    System.out.print("Enter Weight (kg): ");
+                    double weight1 = sc.nextDouble();
+
+                    manager.add(new DomesticCourier(id1, sender1, receiver1, address1, weight1));
+                    break;
+
+                case 2:
+                    System.out.print("Enter ID: ");
+                    int id2 = sc.nextInt();
+                    sc.nextLine();
+
+                    System.out.print("Enter Sender Name: ");
+                    String sender2 = sc.nextLine();
+
+                    System.out.print("Enter Receiver Name: ");
+                    String receiver2 = sc.nextLine();
+
+                    System.out.print("Enter Address: ");
+                    String address2 = sc.nextLine();
+
+                    System.out.print("Enter Weight (kg): ");
+                    double weight2 = sc.nextDouble();
+
+                    manager.add(new InternationalCourier(id2, sender2, receiver2, address2, weight2));
+                    break;
+
+                case 3:
+                    manager.displayAll();
+                    break;
+
+                case 4:
+                    System.out.print("Enter Courier ID to Search: ");
+                    int searchId = sc.nextInt();
+
+                    Courier c = manager.find(searchId);
+
+                    if (c != null) {
+                        System.out.println("Courier Found:");
+                        c.display();
+                    } else {
+                        System.out.println("Courier Not Found!");
+                    }
+                    break;
+
+                case 5:
+                    System.out.print("Enter Courier ID to Remove: ");
+                    int removeId = sc.nextInt();
+                    manager.remove(removeId);
+                    break;
+
+                case 6:
+                    System.out.println("Exiting Courier Management System...");
+                    break;
+
+                default:
+                    System.out.println("Invalid Choice!");
+            }
+
+        } while (choice != 6);
+
+        sc.close();
+
+    }
+}    
