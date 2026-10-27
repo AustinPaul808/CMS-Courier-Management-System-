@@ -84,3 +84,86 @@ abstract class Courier {
     abstract double getPrice();
  
     abstract String getType();
+// One line per courier for the file: TYPE|id|sender|receiver|address|weight
+    String toFileString() {
+        return getType().charAt(0) + "|" + id + "|" + sender + "|" + receiver + "|" + address + "|" + weight;
+    }
+ 
+    void display() {
+        System.out.println("ID: " + id);
+        System.out.println("Sender: " + sender);
+        System.out.println("Receiver: " + receiver);
+        System.out.println("Address: " + address);
+        System.out.println("Weight: " + weight + " kg");
+    }
+}
+ 
+// ---------- Domestic ----------
+class DomesticCourier extends Courier {
+    private double price;
+ 
+    DomesticCourier(int id, String sender, String receiver,
+                    String address, double weight) {
+        super(id, sender, receiver, address, weight);
+        calculatePrice();
+    }
+ 
+    @Override
+    double calculatePrice() {
+        // Rs. 50 base + Rs. 20 per kg
+        price = 50 + 20 * getWeight();
+        return price;
+    }
+ 
+    @Override
+    double getPrice() {
+        return price;
+    }
+ 
+    @Override
+    String getType() {
+        return "Domestic";
+    }
+ 
+    @Override
+    void display() {
+        super.display();
+        System.out.println("Type: Domestic");
+        System.out.println("Price: Rs. " + String.format("%.2f", price));
+    }
+}
+ 
+// ---------- International ----------
+class InternationalCourier extends Courier {
+    private double price;
+ 
+    InternationalCourier(int id, String sender, String receiver,
+                         String address, double weight) {
+        super(id, sender, receiver, address, weight);
+        calculatePrice();
+    }
+ 
+    @Override
+    double calculatePrice() {
+        // Rs. 500 base + Rs. 150 per kg
+        price = 500 + 150 * getWeight();
+        return price;
+    }
+ 
+    @Override
+    double getPrice() {
+        return price;
+    }
+ 
+    @Override
+    String getType() {
+        return "International";
+    }
+ 
+    @Override
+    void display() {
+        super.display();
+        System.out.println("Type: International");
+        System.out.println("Price: Rs. " + String.format("%.2f", price));
+    }
+}
