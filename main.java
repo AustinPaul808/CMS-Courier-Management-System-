@@ -167,3 +167,98 @@ class InternationalCourier extends Courier {
         System.out.println("Price: Rs. " + String.format("%.2f", price));
     }
 }
+// ---------- Manager (collection + file handling) ----------
+class CourierManager {
+    Vector<Courier> list = new Vector<>();
+ 
+    void add(Courier c) {
+        if (find(c.getId()) != null) {
+            throw new IllegalArgumentException("A courier with ID " + c.getId() + " already exists.");
+        }
+        list.add(c);
+    }
+ 
+    void displayAll() {
+        if (list.isEmpty()) {
+            System.out.println("No couriers to show.");
+            return;
+        }
+        for (Courier c : list) {
+            System.out.println("-------------------------");
+            c.display();
+        }
+        System.out.println("-------------------------");
+        System.out.println("Total couriers: " + list.size());
+    }
+ 
+    Courier find(int id) {
+        for (Courier c : list) {
+            if (c.getId() == id) {
+                return c;
+            }
+        }
+        return null;
+    }
+ 
+    void remove(int id) throws CourierNotFoundException {
+        Courier c = find(id);
+ 
+        if (c == null) {
+            throw new CourierNotFoundException(id);
+        }
+        list.remove(c);
+    }
+ 
+    void sortByWeight() {
+        Collections.sort(list, Comparator.comparingDouble(Courier::getWeight));
+    }
+ 
+    void sortByPrice() {
+        Collections.sort(list, Comparator.comparingDouble(Courier::getPrice));
+    }
+ 
+    // ----- File handling -----
+    void saveToFile(String filename) throws IOException {
+        try (PrintWriter pw = new PrintWriter(new FileWriter(filename))) {
+            for (Courier c : list) {
+                pw.println(c.toFileString());
+            }
+        }
+    }
+ 
+    void loadFromFile(String filename) throws IOException {
+        File f = new File(filename);
+        if (!f.exists()) {
+            return; // first run, nothing to load
+        }
+ 
+        int skipped = 0;
+        try (BufferedReader br = new BufferedReader(new FileReader(f))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                if (line.trim().isEmpty()) {
+                    continue;
+                }
+                try {
+                    String[] p = line.split("\\|");
+                    int id = Integer.parseInt(p[1]);
+                    double weight = Double.parseDouble(p[5]);
+                    Courier c;
+                    if (p[0].equals("D")) {
+                        c = new DomesticCourier(id, p[2], p[3], p[4], weight);
+                    } else if (p[0].equals("I")) {
+                        c = new InternationalCourier(id, p[2], p[3], p[4], weight);
+                    } else {
+                        throw new IllegalArgumentException("Unknown type");
+                    }
+                    add(c);
+                } catch (IllegalArgumentException | ArrayIndexOutOfBoundsException e) {
+                    skipped++; // bad line, skip it
+                }
+            }
+        }
+        if (skipped > 0) {
+            System.out.println("Warning: skipped " + skipped + " corrupted line(s) in " + filename);
+        }
+    }
+}
